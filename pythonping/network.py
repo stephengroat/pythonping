@@ -2,7 +2,7 @@ import socket
 import select
 import time
 import ipaddress
-from utils import system_has_ipv6
+from . import utils
 
 
 class Socket:
@@ -25,7 +25,7 @@ class Socket:
         :type buffer_size: int
         :param family: socket.AddressFamily to use
         :type family: socket.AddressFamily"""
-        if family == socket.AF_UNSPEC and not system_has_ipv6():
+        if family == socket.AF_UNSPEC and not utils.system_has_ipv6():
             family = socket.AF_INET
         try:
             # Use first address that returns for DNS
