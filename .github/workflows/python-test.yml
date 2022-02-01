@@ -16,4 +16,6 @@ jobs:
       run: |
         pip install pytest
         pip install pytest-cov
+        echo $PATH
+        sudo -E echo $PATH
         sudo -E pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
