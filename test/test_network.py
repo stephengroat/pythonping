@@ -1,5 +1,7 @@
 import unittest
+import socket
 from pythonping.network import Socket
+from pythonping.utils import system_has_ipv6
 
 
 class UtilsTestCase(unittest.TestCase):
@@ -9,3 +11,27 @@ class UtilsTestCase(unittest.TestCase):
         """Test a runtime error is generated if the name cannot be resolved"""
         with self.assertRaises(RuntimeError):
             Socket('cant.resolve.this.address.localhost', 'ip')
+
+    def test_ipv6(self):
+        sock = Socket('ipv6.google.com', 'ip')
+        self.assertEqual(sock.socket.family, socket.AF_INET6)
+
+    def test_ipv4_dns(self):
+        sock = Socket('ipv4.google.com', 'ip')
+        self.assertEqual(sock.socket.family, socket.AF_INET)
+
+    def test_ipv6_address(self):
+        sock = Socket('2001:4860:4860::8888', 'ip')
+        self.assertEqual(sock.socket.family, socket.AF_INET6)
+
+    def test_ipv4_address(self):
+        sock = Socket('8.8.8.8', 'ip')
+        self.assertEqual(sock.socket.family, socket.AF_INET)
+
+    def test_dualstack(self):
+        sock = Socket('google.com', 'ip')
+        self.assertEqual(sock.socket.family, socket.AF_INET6)
+
+    def test_dualstack_inet(self):
+        sock = Socket('google.com', 'ip', family=socket.AF_INET)
+        self.assertEqual(sock.socket.family, socket.AF_INET)

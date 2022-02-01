@@ -1,6 +1,8 @@
 import socket
 import select
 import time
+import ipaddress
+from utils import system_has_ipv6
 
 
 class Socket:
@@ -8,7 +10,7 @@ class Socket:
     PROTO_LOOKUP = {"icmp": socket.IPPROTO_ICMP, "tcp": socket.IPPROTO_TCP, "udp": socket.IPPROTO_UDP,
                     "ip": socket.IPPROTO_IP, "raw": socket.IPPROTO_RAW}
 
-    def __init__(self, destination, protocol, source=None, options=(), buffer_size=2048):
+    def __init__(self, destination, protocol, source=None, options=(), buffer_size=2048, family=socket.AF_UNSPEC):
         """Creates a network socket to exchange messages
 
         :param destination: Destination IP address
@@ -20,9 +22,14 @@ class Socket:
         :param source: Source IP to use - implemented in future releases
         :type source: Union[None, str]
         :param buffer_size: Size in bytes of the listening buffer for incoming packets (replies)
-        :type buffer_size: int"""
+        :type buffer_size: int
+        :param family: socket.AddressFamily to use
+        :type family: socket.AddressFamily"""
+        if family == socket.AF_UNSPEC and not system_has_ipv6():
+            family = socket.AF_INET
         try:
-            self.destination = socket.gethostbyname(destination)
+            # Use first address that returns for DNS
+            self.destination = [address[4][0] for address in socket.getaddrinfo(destination, 0, family)][0]
         except socket.gaierror as e:
             raise RuntimeError('Cannot resolve address "' + destination + '", try verify your DNS or host file')
 
@@ -30,7 +37,15 @@ class Socket:
         self.buffer_size = buffer_size
         if source is not None:
             raise NotImplementedError('PythonPing currently does not support specification of source IP')
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.protocol)
+        if family == socket.AF_UNSPEC:
+            destination_type = type(ipaddress.ip_address(self.destination))
+            if destination_type == ipaddress.IPv4Address:
+                family = socket.AF_INET
+            elif destination_type == ipaddress.IPv6Address:
+                family = socket.AF_INET6
+            else:
+                raise RuntimeError('AddressTy[e not defined: ' + destination_type)
+        self.socket = socket.socket(family, socket.SOCK_RAW, self.protocol)
         if options:
             self.socket.setsockopt(*options)
 
