@@ -12,7 +12,7 @@ class PingCase(unittest.TestCase):
         self.assertEqual(len(ping('10.127.0.1', count=4, size=10)), 4,
                          'Sent 4 pings to localhost, but not received 4 responses')
 
-        if os.getenv("GITHUB_ACTION") is not None:
+        if os.getenv("GITHUB_ACTIONS") is not None:
             self.assertEqual(ping('8.8.8.8', count=4, size=992).success(), True,
                          'Sent 4 large pings to google DNS A with payload match off, received all replies')
             self.assertEqual(ping('8.8.8.8', count=4, size=992, match=True).success(), False,
