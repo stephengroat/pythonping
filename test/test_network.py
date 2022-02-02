@@ -13,25 +13,25 @@ class UtilsTestCase(unittest.TestCase):
             Socket('cant.resolve.this.address.localhost', 'ip')
 
     def test_ipv6(self):
-        sock = Socket('ipv6.google.com', 'ip')
+        sock = Socket('ipv6.google.com', 'raw')
         self.assertEqual(sock.socket.family, socket.AF_INET6)
 
     def test_ipv4_dns(self):
-        sock = Socket('ipv4.google.com', 'ip')
+        sock = Socket('ipv4.google.com', 'raw')
         self.assertEqual(sock.socket.family, socket.AF_INET)
 
     def test_ipv6_address(self):
-        sock = Socket('2001:4860:4860::8888', 'ip')
+        sock = Socket('2001:4860:4860::8888', 'raw')
         self.assertEqual(sock.socket.family, socket.AF_INET6)
 
     def test_ipv4_address(self):
-        sock = Socket('8.8.8.8', 'ip')
+        sock = Socket('8.8.8.8', 'raw')
         self.assertEqual(sock.socket.family, socket.AF_INET)
 
     def test_dualstack(self):
-        sock = Socket('google.com', 'ip')
+        sock = Socket('google.com', 'raw')
         self.assertEqual(sock.socket.family, socket.AF_INET6)
 
     def test_dualstack_inet(self):
-        sock = Socket('google.com', 'ip', family=socket.AF_INET)
+        sock = Socket('google.com', 'raw', family=socket.AF_INET)
         self.assertEqual(sock.socket.family, socket.AF_INET)
