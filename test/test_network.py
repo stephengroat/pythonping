@@ -30,7 +30,7 @@ class UtilsTestCase(unittest.TestCase):
 
     def test_dualstack(self):
         sock = Socket('google.com', 'raw')
-        self.assertEqual(sock.socket.family, socket.AF_INET6)
+        self.assertEqual(sock.socket.family, socket.AF_INET)
 
     def test_dualstack_inet(self):
         sock = Socket('google.com', 'raw', family=socket.AF_INET)
