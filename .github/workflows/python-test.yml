@@ -14,5 +14,6 @@ jobs:
         python-version: '3.x'
     - name: Test with pytest
       run: |
+        dig cant.resolve.this.address.localhost
         sudo pip install pytest pytest-cov
         sudo -E pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
